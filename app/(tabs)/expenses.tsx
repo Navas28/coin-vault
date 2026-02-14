@@ -1,15 +1,13 @@
 import { Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function ExpensesScreen() {
+export default function Expenses() {
   return (
-      <View className="flex-1 justify-center items-center p-5 bg-white dark:bg-gray-900">
-      <Text className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-        Expenses
-      </Text>
-      <Text className="text-base font-medium text-gray-700 dark:text-gray-300">
-        Your expense list will appear here
-      </Text>
-    </View>
+    <SafeAreaView className="flex-1 bg-white p-6">
+      <View className="flex-1 justify-center items-center">
+        <Text className="text-2xl font-bold text-gray-800">Expenses</Text>
+        <Text className="text-gray-500 mt-2">Activity coming soon...</Text>
+      </View>
+    </SafeAreaView>
   );
 }
-
