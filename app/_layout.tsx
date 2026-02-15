@@ -10,7 +10,7 @@ import {
   ThemeProvider as NavProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack, useRouter } from "expo-router";
+import { Stack, router } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
@@ -22,12 +22,22 @@ import { supabase } from "../lib/supabase";
 
 SplashScreen.preventAutoHideAsync();
 
-export const unstable_settings = {
-  anchor: "(tabs)",
-};
-
 function RootLayoutContent() {
-  const { theme, isDark } = useTheme();
+  const { isDark } = useTheme();
+
+  useEffect(() => {
+    // Auth listener
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event: any, session: any) => {
+      if (session) {
+        // Use direct router object instead of hook
+        router.replace("/(tabs)");
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   return (
     <NavProvider value={isDark ? DarkTheme : DefaultTheme}>
@@ -52,24 +62,10 @@ export default function RootLayout() {
     Poppins_700Bold,
   });
 
-  const router = useRouter();
-
   useEffect(() => {
     if (loaded) {
       SplashScreen.hideAsync();
     }
-
-    // Auth listener
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event: any, session: any) => {
-      if (session) {
-        // @ts-ignore
-        router.replace("/(tabs)");
-      }
-    });
-
-    return () => subscription.unsubscribe();
   }, [loaded]);
 
   if (!loaded) {

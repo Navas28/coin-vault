@@ -1,13 +1,12 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
+import { router } from "expo-router";
 import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { VaultButton } from "../components/VaultButton";
 import { useTheme } from "../context/ThemeContext";
 
 export default function Intro1() {
-  const router = useRouter();
   const { colors, isDark } = useTheme();
 
   const gradientColors = (
@@ -16,7 +15,7 @@ export default function Intro1() {
 
   return (
     <LinearGradient colors={gradientColors} className="flex-1">
-      <SafeAreaView className="flex-1">
+      <SafeAreaView className="flex-1" edges={["top", "bottom"]}>
         <View className="flex-1 px-8 justify-between py-12">
           <View className="items-center mt-6">
             <View className="items-center justify-center">

@@ -11,7 +11,7 @@ export default function Goals() {
 
   return (
     <LinearGradient colors={gradientColors} className="flex-1">
-      <SafeAreaView className="flex-1">
+      <SafeAreaView className="flex-1" edges={["top", "bottom"]}>
         <View className="flex-1 px-8 py-12 items-center justify-center">
           <Text className="text-4xl font-bold" style={{ color: colors.text }}>
             Goals

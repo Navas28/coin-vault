@@ -1,5 +1,4 @@
 import { Feather, MaterialIcons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -7,7 +6,6 @@ import { useTheme } from "../../context/ThemeContext";
 import { supabase } from "../../lib/supabase";
 
 export default function Home() {
-  const router = useRouter();
   const { colors, toggleTheme, isDark } = useTheme();
   const [userName, setUserName] = useState<string | null>(null);
   const [isGuest, setIsGuest] = useState(false);
@@ -66,7 +64,7 @@ export default function Home() {
 
   return (
     <View className="flex-1" style={{ backgroundColor: colors.background }}>
-      <SafeAreaView className="flex-1">
+      <SafeAreaView className="flex-1" edges={["top", "bottom"]}>
         {/* 1. Top Header */}
         <View className="px-6 py-4 flex-row items-center justify-between">
           <View className="flex-row items-center">
@@ -108,16 +106,6 @@ export default function Home() {
                 color={colors.accent}
               />
             </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => router.push("/settings")}
-              className="overflow-hidden items-center justify-center"
-            >
-              <MaterialIcons
-                name="account-circle"
-                size={40}
-                color={colors.accent}
-              />
-            </TouchableOpacity>
           </View>
         </View>
 
@@ -128,12 +116,10 @@ export default function Home() {
           {/* 2. Total Balance Card */}
           <View
             className="w-full mt-6 p-8 rounded-2xl border"
-           style={{
-                  backgroundColor: isDark
-                    ? colors.whiteOpacity(0.05)
-                    : colors.card,
-                  borderColor: colors.border,
-                }}
+            style={{
+              backgroundColor: isDark ? colors.whiteOpacity(0.05) : colors.card,
+              borderColor: colors.border,
+            }}
           >
             <Text
               className="text-base font-medium mb-1"

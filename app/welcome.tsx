@@ -1,12 +1,11 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { useRouter } from "expo-router";
+import { router } from "expo-router";
 import { useEffect } from "react";
 import { Image, Text, View } from "react-native";
 import { useTheme } from "../context/ThemeContext";
 
 export default function Welcome() {
-  const router = useRouter();
   const { colors, isDark } = useTheme();
 
   useEffect(() => {

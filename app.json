@@ -43,6 +43,10 @@
       ],
       "expo-secure-store"
     ],
+    "updates": {
+      "checkAutomatically": "NEVER",
+      "enabled": false
+    },
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true

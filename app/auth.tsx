@@ -1,7 +1,7 @@
 import { AntDesign, MaterialIcons } from "@expo/vector-icons";
+import * as AuthSession from "expo-auth-session";
 import { LinearGradient } from "expo-linear-gradient";
-import * as Linking from "expo-linking";
-import { useRouter } from "expo-router";
+import { router } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import React, { useState } from "react";
 import {
@@ -18,7 +18,6 @@ import { supabase } from "../lib/supabase";
 WebBrowser.maybeCompleteAuthSession();
 
 export default function Auth() {
-  const router = useRouter();
   const { colors, isDark } = useTheme();
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [isGuestLoading, setIsGuestLoading] = useState(false);
@@ -26,7 +25,12 @@ export default function Auth() {
   const handleGoogleSignIn = async () => {
     setIsGoogleLoading(true);
     try {
-      const redirectUrl = Linking.createURL("/auth");
+      const redirectUrl = AuthSession.makeRedirectUri({
+        scheme: "coinvault",
+      });
+
+      console.log("Auth Redirect URL:", redirectUrl);
+
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
@@ -48,11 +52,9 @@ export default function Auth() {
 
         if (result.type === "success") {
           const { url } = result;
-          const fragment = url.split("#")[1];
-          if (!fragment) return;
-
-          const params = Object.fromEntries(new URLSearchParams(fragment));
-          const { access_token, refresh_token } = params;
+          const params = new URLSearchParams(url.split("#")[1]);
+          const access_token = params.get("access_token");
+          const refresh_token = params.get("refresh_token");
 
           if (access_token && refresh_token) {
             const { error: sessionError } = await supabase.auth.setSession({
@@ -90,7 +92,7 @@ export default function Auth() {
 
   return (
     <LinearGradient colors={gradientColors} className="flex-1">
-      <SafeAreaView className="flex-1">
+      <SafeAreaView className="flex-1" edges={["top", "bottom"]}>
         <View className="flex-1 px-8 justify-between py-12">
           <View className="items-center mt-6">
             <View className="items-center justify-center">
