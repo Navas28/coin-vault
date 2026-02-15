@@ -1,35 +1,79 @@
-import { Image } from "expo-image";
+import { MaterialIcons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Colors } from "../constants/Colors";
 
 export default function Intro1() {
   const router = useRouter();
-  return (
-    <SafeAreaView className="flex-1 bg-white p-6 justify-between">
-      <View className="flex-1 justify-center items-center">
-        <Image
-          source={require("../assets/svg/track-expense.svg")}
-          style={{ width: 300, height: 300 }}
-          contentFit="contain"
-        />
 
-        <Text className="text-2xl font-semibold text-center mb-4 text-gray-800">
-          Track Your Expenses
-        </Text>
-        <Text className="text-base text-gray-600 text-center font-sans">
-          Keep track of your daily expenses easily and efficiently. Identify
-          where your money goes.
-        </Text>
-      </View>
-      <TouchableOpacity
-        className="bg-blue-600 py-4 rounded-xl items-center mb-8"
-        onPress={() => router.push("/intro2")}
-      >
-        <Text className="text-white text-lg font-semibold">
-          Next
-        </Text>
-      </TouchableOpacity>
-    </SafeAreaView>
+  return (
+    <LinearGradient colors={[Colors.vault.navy, "#1e3843"]} className="flex-1">
+      <SafeAreaView className="flex-1">
+        <View className="flex-1 px-8 justify-between py-12">
+          <View className="items-center mt-6">
+            <View className="items-center justify-center">
+              <View
+                className="w-56 h-56 rounded-full border-4 items-center justify-center"
+                style={{ borderColor: Colors.vault.accentOpacity(0.8) }}
+              >
+                <View
+                  className="absolute w-40 h-40 rounded-full blur-xl opacity-20"
+                  style={{ backgroundColor: Colors.vault.accent }}
+                />
+                <MaterialIcons
+                  name="account-balance-wallet"
+                  size={100}
+                  color={Colors.vault.whiteOpacity(0.8)}
+                />
+              </View>
+            </View>
+          </View>
+
+          <View className="items-center">
+            <Text
+              className="text-5xl font-semibold text-center mb-6 leading-tight"
+              style={{ color: Colors.vault.accent }}
+            >
+              Track your{"\n"}expenses
+            </Text>
+            <Text
+              className="text-lg text-center leading-relaxed font-medium px-2"
+              style={{ color: Colors.vault.whiteOpacity(0.8) }}
+            >
+              Keep track of your daily expenses easily and efficiently. Identify
+              where your money goes.
+            </Text>
+          </View>
+
+          <View className="flex-row space-x-2 gap-2 items-center justify-center">
+            <View
+              className="w-10 h-2.5 rounded-full"
+              style={{ backgroundColor: Colors.vault.accent }}
+            />
+            <View
+              className="w-2.5 h-2.5 rounded-full"
+              style={{ backgroundColor: Colors.vault.whiteOpacity(0.2) }}
+            />
+            <View
+              className="w-2.5 h-2.5 rounded-full"
+              style={{ backgroundColor: Colors.vault.whiteOpacity(0.2) }}
+            />
+          </View>
+
+          <View className="w-full">
+            <TouchableOpacity
+              activeOpacity={0.8}
+              className="py-5 rounded-[28px] items-center mb-2"
+              style={{ backgroundColor: Colors.vault.emerald }}
+              onPress={() => router.push("/intro2")}
+            >
+              <Text className="text-white text-xl font-bold">Next</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </SafeAreaView>
+    </LinearGradient>
   );
 }

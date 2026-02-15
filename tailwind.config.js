@@ -11,6 +11,13 @@ module.exports = {
         semibold: ["Poppins_600SemiBold"],
         bold: ["Poppins_700Bold"],
       },
+      colors: {
+        vault: {
+          navy: "#284b5c",
+          emerald: "#519892",
+          accent: "#aeddd5",
+        },
+      },
     },
   },
   plugins: [],

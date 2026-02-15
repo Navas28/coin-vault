@@ -1,4 +1,6 @@
-import { AntDesign } from "@expo/vector-icons";
+import { Colors } from "@/constants/Colors";
+import { AntDesign, MaterialIcons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 import * as Linking from "expo-linking";
 import { useRouter } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
@@ -6,7 +8,6 @@ import React, { useState } from "react";
 import {
   ActivityIndicator,
   Alert,
-  Image,
   Text,
   TouchableOpacity,
   View,
@@ -84,45 +85,106 @@ export default function Auth() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white p-6 justify-center">
-      <View className="items-center">
-        <Image
-          source={require("../assets/images/logo.png")}
-          className="w-[220px] h-[220px] mb-4"
-          resizeMode="contain"
-        />
-      </View>
-      <View className="w-full space-y-4">
-        <TouchableOpacity
-          className="flex-row items-center justify-center bg-white border border-gray-300 py-4 rounded-xl space-x-3 mb-4"
-          onPress={handleGoogleSignIn}
-          disabled={isLoading}
-        >
-          {isLoading ? (
-            <ActivityIndicator color="#000" />
-          ) : (
-            <>
-              <AntDesign
-                name="google"
-                size={24}
-                color="black"
-                style={{ marginRight: 10 }}
+    <LinearGradient colors={[Colors.vault.navy, "#1e3843"]} className="flex-1">
+      <SafeAreaView className="flex-1">
+        <View className="flex-1 px-8 justify-between py-12">
+          <View className="items-center mt-6">
+            <View className="items-center justify-center">
+              <View
+                className="w-56 h-56 rounded-full border-4 items-center justify-center"
+                style={{ borderColor: Colors.vault.accentOpacity(0.8) }}
+              >
+                <View
+                  className="absolute w-40 h-40 rounded-full blur-xl opacity-20"
+                  style={{ backgroundColor: Colors.vault.accent }}
+                />
+                <MaterialIcons
+                  name="shield"
+                  size={100}
+                  color={Colors.vault.accent}
+                />
+              </View>
+            </View>
+          </View>
+
+          <View className="items-center">
+            <Text
+              className="text-5xl font-semibold text-center mb-6 leading-tight"
+              style={{ color: Colors.vault.accent }}
+            >
+              Stay Secure
+            </Text>
+            <Text
+              className="text-lg text-center leading-relaxed font-medium px-2"
+              style={{ color: Colors.vault.whiteOpacity(0.7) }}
+            >
+              Your financial data is encrypted and protected with
+              industry-leading security.
+            </Text>
+
+            <View className="flex-row space-x-2 mt-12 gap-2 items-center justify-center">
+              <View
+                className="w-2.5 h-2.5 rounded-full"
+                style={{ backgroundColor: Colors.vault.whiteOpacity(0.2) }}
               />
-              <Text className="text-gray-700 text-lg font-semibold">
-                Continue with Google
+              <View
+                className="w-2.5 h-2.5 rounded-full"
+                style={{ backgroundColor: Colors.vault.whiteOpacity(0.2) }}
+              />
+              <View
+                className="w-10 h-2.5 rounded-full"
+                style={{ backgroundColor: Colors.vault.accent }}
+              />
+            </View>
+          </View>
+
+          <View className="w-full space-y-4">
+            <TouchableOpacity
+              activeOpacity={0.9}
+              className="flex-row items-center justify-center bg-white py-5 rounded-[24px] shadow-xl"
+              onPress={handleGoogleSignIn}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <ActivityIndicator color={Colors.vault.navy} />
+              ) : (
+                <>
+                  <AntDesign
+                    name="google"
+                    size={24}
+                    color="#000"
+                    style={{ marginRight: 12 }}
+                  />
+                  <Text className="text-black text-xl font-bold">
+                    Continue with Google
+                  </Text>
+                </>
+              )}
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              activeOpacity={0.7}
+              className="py-5 rounded-[24px] items-center border-2 mt-2"
+              style={{ borderColor: Colors.vault.accentOpacity(0.5) }}
+              onPress={handleGuestSignIn}
+            >
+              <Text
+                className="text-xl font-bold"
+                style={{ color: Colors.vault.accent }}
+              >
+                Continue as Guest
               </Text>
-            </>
-          )}
-        </TouchableOpacity>
-        <TouchableOpacity
-          className="bg-gray-100 py-4 rounded-xl items-center"
-          onPress={handleGuestSignIn}
-        >
-          <Text className="text-gray-700 text-lg font-semibold">
-            Continue as Guest
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
+            </TouchableOpacity>
+
+            <Text
+              className="text-center text-xs mt-8 font-medium uppercase tracking-widest"
+              style={{ color: Colors.vault.whiteOpacity(0.3) }}
+            >
+              By continuing, you agree to our Terms & Privacy
+            </Text>
+          </View>
+        </View>
+      </SafeAreaView>
+    </LinearGradient>
   );
 }
