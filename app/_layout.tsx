@@ -9,6 +9,7 @@ import {
   DefaultTheme,
   ThemeProvider as NavProvider,
 } from "@react-navigation/native";
+import "expo-dev-client";
 import { useFonts } from "expo-font";
 import { Stack, router } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";

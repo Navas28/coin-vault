@@ -1,5 +1,4 @@
 import { AntDesign, MaterialIcons } from "@expo/vector-icons";
-import * as AuthSession from "expo-auth-session";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
@@ -25,11 +24,8 @@ export default function Auth() {
   const handleGoogleSignIn = async () => {
     setIsGoogleLoading(true);
     try {
-      const redirectUrl = AuthSession.makeRedirectUri({
-        scheme: "coinvault",
-      });
-
-      console.log("Auth Redirect URL:", redirectUrl);
+      // Hardcode the scheme to ensure it NEVER uses exp://
+      const redirectUrl = "coinvault://auth";
 
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
@@ -52,9 +48,9 @@ export default function Auth() {
 
         if (result.type === "success") {
           const { url } = result;
-          const params = new URLSearchParams(url.split("#")[1]);
-          const access_token = params.get("access_token");
-          const refresh_token = params.get("refresh_token");
+          // Robust token extraction
+          const access_token = url.match(/access_token=([^&]+)/)?.[1];
+          const refresh_token = url.match(/refresh_token=([^&]+)/)?.[1];
 
           if (access_token && refresh_token) {
             const { error: sessionError } = await supabase.auth.setSession({

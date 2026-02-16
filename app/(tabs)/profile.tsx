@@ -1,5 +1,4 @@
 import { AntDesign, Feather, MaterialIcons } from "@expo/vector-icons";
-import * as AuthSession from "expo-auth-session";
 import { LinearGradient } from "expo-linear-gradient";
 import { router } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
@@ -32,9 +31,7 @@ export default function Profile() {
     setIsGoogleLoading(true);
     try {
       // Robust way to generate redirect URI for Expo Go
-      const redirectUrl = AuthSession.makeRedirectUri({
-        scheme: "coinvault",
-      });
+      const redirectUrl = "coinvault://auth";
 
       console.log("Supabase Redirect URL:", redirectUrl);
 
@@ -59,9 +56,8 @@ export default function Profile() {
 
         if (result.type === "success") {
           const { url } = result;
-          const params = new URLSearchParams(url.split("#")[1]);
-          const access_token = params.get("access_token");
-          const refresh_token = params.get("refresh_token");
+          const access_token = url.match(/access_token=([^&]+)/)?.[1];
+          const refresh_token = url.match(/refresh_token=([^&]+)/)?.[1];
 
           if (access_token && refresh_token) {
             await supabase.auth.setSession({
