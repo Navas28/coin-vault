@@ -76,3 +76,19 @@ Light Screen (Clean Look):
 Input Fields:
     Background:  white (opacity 5%) (on dark) or light gray (on white).
     Border: #519892 (when the user is typing).
+
+
+
+insert into public.categories (user_id, name, icon, type, is_default)
+values 
+  -- Expenses
+  ('fb5623c9-2b8c-492b-a5f6-4d30c1785c1f', 'Home', 'home', 'expense', true),
+  ('fb5623c9-2b8c-492b-a5f6-4d30c1785c1f', 'Food', 'restaurant', 'expense', true),
+  ('fb5623c9-2b8c-492b-a5f6-4d30c1785c1f', 'Shopping', 'shopping-bag', 'expense', true),
+  ('fb5623c9-2b8c-492b-a5f6-4d30c1785c1f', 'Transport', 'directions-car', 'expense', true),
+  ('fb5623c9-2b8c-492b-a5f6-4d30c1785c1f', 'Entertainment', 'movie', 'expense', true),
+  
+  -- Income
+  ('fb5623c9-2b8c-492b-a5f6-4d30c1785c1f', 'Salary', 'attach-money', 'income', true),
+  ('fb5623c9-2b8c-492b-a5f6-4d30c1785c1f', 'Gift', 'card-giftcard', 'income', true),
+  ('fb5623c9-2b8c-492b-a5f6-4d30c1785c1f', 'Investments', 'trending-up', 'income', true);

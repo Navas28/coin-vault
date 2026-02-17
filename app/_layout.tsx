@@ -43,12 +43,13 @@ function RootLayoutContent() {
   return (
     <NavProvider value={isDark ? DarkTheme : DefaultTheme}>
       <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="index" />
-        <Stack.Screen name="welcome" />
-        <Stack.Screen name="intro1" />
-        <Stack.Screen name="intro2" />
-        <Stack.Screen name="auth" />
+        {/* The index, welcome, intro, and auth screens are already auto-mapped. 
+            We only define them here if we want to lock their options. */}
         <Stack.Screen name="(tabs)" />
+        <Stack.Screen
+          name="add-transaction"
+          options={{ presentation: "modal" }}
+        />
       </Stack>
       <StatusBar style={isDark ? "light" : "dark"} />
     </NavProvider>

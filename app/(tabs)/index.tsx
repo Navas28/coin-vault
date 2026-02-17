@@ -1,6 +1,13 @@
 import { Feather, MaterialIcons } from "@expo/vector-icons";
-import { useEffect, useState } from "react";
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback, useState } from "react";
+import {
+  RefreshControl,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../../context/ThemeContext";
 import { supabase } from "../../lib/supabase";
@@ -9,56 +16,80 @@ export default function Home() {
   const { colors, toggleTheme, isDark } = useTheme();
   const [userName, setUserName] = useState<string | null>(null);
   const [isGuest, setIsGuest] = useState(false);
+  const [showGuestWarning, setShowGuestWarning] = useState(true);
 
-  useEffect(() => {
-    getUser();
-  }, []);
+  const [balance, setBalance] = useState(0);
+  const [income, setIncome] = useState(0);
+  const [expense, setExpense] = useState(0);
+  const [recentTransactions, setRecentTransactions] = useState<any[]>([]);
+  const [refreshing, setRefreshing] = useState(false);
 
-  async function getUser() {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (user) {
-      setIsGuest(user.is_anonymous ?? false);
-      setUserName(
-        user.is_anonymous
-          ? "Guest"
-          : user.user_metadata?.full_name ||
-              user.email?.split("@")[0] ||
-              "User",
-      );
+  // Reload data when screen focuses
+  useFocusEffect(
+    useCallback(() => {
+      fetchDashboardData();
+    }, []),
+  );
+
+  const fetchDashboardData = async () => {
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (user) {
+        setIsGuest(user.is_anonymous ?? false);
+        setUserName(
+          user.is_anonymous
+            ? "Guest"
+            : user.user_metadata?.full_name ||
+                user.email?.split("@")[0] ||
+                "User",
+        );
+
+        // Fetch Transactions
+        const { data: txs, error } = await supabase
+          .from("transactions")
+          .select(
+            `
+            id,
+            amount,
+            date,
+            note,
+            type,
+            category:categories(name, icon, type)
+          `,
+          )
+          .eq("user_id", user.id)
+          .order("date", { ascending: false });
+
+        if (error) throw error;
+
+        if (txs) {
+          // Calculate Totals
+          const totalIncome = txs
+            .filter((t) => t.amount > 0)
+            .reduce((sum, t) => sum + t.amount, 0);
+          const totalExpense = txs
+            .filter((t) => t.amount < 0)
+            .reduce((sum, t) => sum + t.amount, 0);
+
+          setIncome(totalIncome);
+          setExpense(totalExpense); // Expense is usually negative
+          setBalance(totalIncome + totalExpense);
+          setRecentTransactions(txs.slice(0, 5));
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setRefreshing(false);
     }
-  }
+  };
 
-  const transactions = [
-    {
-      id: 1,
-      merchant: "The Coffee Roasters",
-      category: "Food",
-      time: "10:30 AM",
-      amount: -12.5,
-      status: "SUCCESS",
-      color: "#FF9F43",
-    },
-    {
-      id: 2,
-      merchant: "Uber Technologies",
-      category: "Transport",
-      time: "08:15 AM",
-      amount: -24.0,
-      status: "SUCCESS",
-      color: "#4834D4",
-    },
-    {
-      id: 3,
-      merchant: "Apple Store",
-      category: "Shopping",
-      time: "Yesterday",
-      amount: -150.0,
-      status: "SUCCESS",
-      color: "#A29BFE",
-    },
-  ];
+  const onRefresh = () => {
+    setRefreshing(true);
+    fetchDashboardData();
+  };
 
   const op = isDark ? colors.whiteOpacity : colors.blackOpacity;
 
@@ -112,6 +143,13 @@ export default function Home() {
         <ScrollView
           className="flex-1 px-6"
           showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor={colors.emerald}
+            />
+          }
         >
           {/* 2. Total Balance Card */}
           <View
@@ -128,10 +166,10 @@ export default function Home() {
               Total Balance
             </Text>
             <Text
-              className="text-5xl font-medium mb-8"
+              className="text-4xl font-bold mb-8"
               style={{ color: colors.text }}
             >
-              $12,480.50
+              ₹{balance.toFixed(2)}
             </Text>
 
             <View
@@ -155,9 +193,9 @@ export default function Home() {
                   </Text>
                   <Text
                     className="font-medium text-lg"
-                    style={{ color: colors.text }}
+                    style={{ color: "#4ADE80" }}
                   >
-                    +$4,250
+                    +₹{income.toFixed(2)}
                   </Text>
                 </View>
               </View>
@@ -184,9 +222,9 @@ export default function Home() {
                   </Text>
                   <Text
                     className="font-medium text-lg"
-                    style={{ color: colors.text }}
+                    style={{ color: "#F87171" }}
                   >
-                    -$1,120
+                    -₹{Math.abs(expense).toFixed(2)}
                   </Text>
                 </View>
               </View>
@@ -201,22 +239,21 @@ export default function Home() {
             >
               Recent Activity
             </Text>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push("/transactions")}>
               <Text
-                className="font-medium tracking-wider text-md uppercase"
-                style={{ color: colors.accent }}
+                className="font-bold tracking-wider text-xs uppercase"
+                style={{ color: colors.emerald }}
               >
                 View All
               </Text>
             </TouchableOpacity>
           </View>
 
-          <View className="space-y-4 mb-24">
-            {transactions.map((item) => (
-              <TouchableOpacity
+          <View className="space-y-3 mb-24">
+            {recentTransactions.map((item) => (
+              <View
                 key={item.id}
-                activeOpacity={0.7}
-                className="flex-row items-center p-4 rounded-3xl mb-3 border"
+                className="flex-row items-center p-4 rounded-2xl mb-3 border"
                 style={{
                   backgroundColor: isDark
                     ? colors.whiteOpacity(0.05)
@@ -225,60 +262,56 @@ export default function Home() {
                 }}
               >
                 <View
-                  className="w-12 h-12 rounded-2xl items-center justify-center mr-4"
-                  style={{ backgroundColor: item.color + "20" }}
+                  className="w-12 h-12 rounded-xl items-center justify-center mr-4"
+                  style={{ backgroundColor: colors.emerald + "20" }}
                 >
                   <MaterialIcons
-                    name={
-                      item.category === "Food"
-                        ? "restaurant"
-                        : item.category === "Transport"
-                          ? "directions-car"
-                          : "shopping-bag"
-                    }
+                    name={item.category?.icon || "category"}
                     size={24}
-                    color={item.color}
+                    color={colors.emerald}
                   />
                 </View>
 
                 <View className="flex-1">
                   <Text
-                    className="font-medium text-base"
+                    className="font-semibold text-base"
                     style={{ color: colors.text }}
                   >
-                    {item.merchant}
+                    {item.note || item.category?.name}
                   </Text>
                   <Text
-                    className="text-xs font-medium"
+                    className="text-xs font-medium mt-0.5"
                     style={{ color: colors.textMuted }}
                   >
-                    {item.category} • {item.time}
+                    {item.category?.name} •{" "}
+                    {new Date(item.date).toLocaleDateString()}
                   </Text>
                 </View>
 
                 <View className="items-end">
                   <Text
-                    className="font-medium text-base mb-1"
-                    style={{ color: colors.text }}
+                    className="font-bold text-base mb-1"
+                    style={{ color: item.amount > 0 ? "#4ADE80" : colors.text }}
                   >
                     {item.amount < 0
-                      ? `-$${Math.abs(item.amount).toFixed(2)}`
-                      : `+$${item.amount.toFixed(2)}`}
+                      ? `-₹${Math.abs(item.amount).toFixed(2)}`
+                      : `+₹${item.amount.toFixed(2)}`}
                   </Text>
-                  <View className="bg-green-500/10 px-2 py-0.5 rounded-md">
-                    <Text className="text-green-400 text-[8px] font-black uppercase tracking-widest">
-                      {item.status}
-                    </Text>
-                  </View>
                 </View>
-              </TouchableOpacity>
+              </View>
             ))}
+            {recentTransactions.length === 0 && (
+              <Text className="text-center text-gray-500 py-4">
+                No recent activity
+              </Text>
+            )}
           </View>
         </ScrollView>
 
         {/* 4. Floating Action Button */}
         <TouchableOpacity
           activeOpacity={0.9}
+          onPress={() => router.push("/add-transaction")}
           className="absolute bottom-6 right-6 w-16 h-16 rounded-full items-center justify-center shadow-2xl"
           style={{
             backgroundColor: colors.emerald,
