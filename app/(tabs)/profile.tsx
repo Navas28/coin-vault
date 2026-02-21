@@ -33,8 +33,6 @@ export default function Profile() {
       // Robust way to generate redirect URI for Expo Go
       const redirectUrl = "coinvault://auth";
 
-      console.log("Supabase Redirect URL:", redirectUrl);
-
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {

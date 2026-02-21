@@ -1,6 +1,5 @@
 import { Feather, MaterialIcons } from "@expo/vector-icons";
-import { router, useFocusEffect } from "expo-router";
-import { useCallback, useState } from "react";
+import { router } from "expo-router";
 import {
   RefreshControl,
   ScrollView,
@@ -9,94 +8,28 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { TransactionItem } from "../../components/transactions/TransactionItem";
 import { useTheme } from "../../context/ThemeContext";
-import { supabase } from "../../lib/supabase";
+import { useDashboard } from "../../hooks/useDashboard";
+import { useTransactions } from "../../hooks/useTransactions";
 
 export default function Home() {
   const { colors, toggleTheme, isDark } = useTheme();
-  const [userName, setUserName] = useState<string | null>(null);
-  const [isGuest, setIsGuest] = useState(false);
-  const [showGuestWarning, setShowGuestWarning] = useState(true);
-
-  const [balance, setBalance] = useState(0);
-  const [income, setIncome] = useState(0);
-  const [expense, setExpense] = useState(0);
-  const [recentTransactions, setRecentTransactions] = useState<any[]>([]);
-  const [refreshing, setRefreshing] = useState(false);
-
-  // Reload data when screen focuses
-  useFocusEffect(
-    useCallback(() => {
-      fetchDashboardData();
-    }, []),
-  );
-
-  const fetchDashboardData = async () => {
-    try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (user) {
-        setIsGuest(user.is_anonymous ?? false);
-        setUserName(
-          user.is_anonymous
-            ? "Guest"
-            : user.user_metadata?.full_name ||
-                user.email?.split("@")[0] ||
-                "User",
-        );
-
-        // Fetch Transactions
-        const { data: txs, error } = await supabase
-          .from("transactions")
-          .select(
-            `
-            id,
-            amount,
-            date,
-            note,
-            type,
-            category:categories(name, icon, type)
-          `,
-          )
-          .eq("user_id", user.id)
-          .order("date", { ascending: false });
-
-        if (error) throw error;
-
-        if (txs) {
-          // Calculate Totals
-          const totalIncome = txs
-            .filter((t) => t.amount > 0)
-            .reduce((sum, t) => sum + t.amount, 0);
-          const totalExpense = txs
-            .filter((t) => t.amount < 0)
-            .reduce((sum, t) => sum + t.amount, 0);
-
-          setIncome(totalIncome);
-          setExpense(totalExpense); // Expense is usually negative
-          setBalance(totalIncome + totalExpense);
-          setRecentTransactions(txs.slice(0, 5));
-        }
-      }
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setRefreshing(false);
-    }
-  };
-
-  const onRefresh = () => {
-    setRefreshing(true);
-    fetchDashboardData();
-  };
+  const {
+    balance,
+    income,
+    expense,
+    recentTransactions,
+    refreshing,
+    onRefresh,
+  } = useDashboard();
+  const { deleteTransaction } = useTransactions();
 
   const op = isDark ? colors.whiteOpacity : colors.blackOpacity;
 
   return (
     <View className="flex-1" style={{ backgroundColor: colors.background }}>
       <SafeAreaView className="flex-1" edges={["top", "bottom"]}>
-        {/* 1. Top Header */}
         <View className="px-6 py-4 flex-row items-center justify-between">
           <View className="flex-row items-center">
             <View
@@ -125,19 +58,17 @@ export default function Home() {
             </View>
           </View>
 
-          <View className="flex-row items-center space-x-4 gap-4">
-            <TouchableOpacity
-              onPress={toggleTheme}
-              className="p-2 rounded-full"
-              style={{ backgroundColor: op(0.05) }}
-            >
-              <Feather
-                name={isDark ? "sun" : "moon"}
-                size={20}
-                color={colors.accent}
-              />
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity
+            onPress={toggleTheme}
+            className="p-2 rounded-full"
+            style={{ backgroundColor: op(0.05) }}
+          >
+            <Feather
+              name={isDark ? "sun" : "moon"}
+              size={20}
+              color={colors.accent}
+            />
+          </TouchableOpacity>
         </View>
 
         <ScrollView
@@ -151,7 +82,6 @@ export default function Home() {
             />
           }
         >
-          {/* 2. Total Balance Card */}
           <View
             className="w-full mt-6 p-8 rounded-2xl border"
             style={{
@@ -192,10 +122,10 @@ export default function Home() {
                     Income
                   </Text>
                   <Text
-                    className="font-medium text-lg"
+                    className="font-semibold text-lg"
                     style={{ color: "#4ADE80" }}
                   >
-                    +₹{income.toFixed(2)}
+                    +₹ {income.toFixed(2)}
                   </Text>
                 </View>
               </View>
@@ -221,17 +151,16 @@ export default function Home() {
                     Expenses
                   </Text>
                   <Text
-                    className="font-medium text-lg"
+                    className="font-semibold text-lg"
                     style={{ color: "#F87171" }}
                   >
-                    -₹{Math.abs(expense).toFixed(2)}
+                    -₹ {Math.abs(expense).toFixed(2)}
                   </Text>
                 </View>
               </View>
             </View>
           </View>
 
-          {/* 3. Recent Activity */}
           <View className="mt-10 mb-6 flex-row justify-between items-center">
             <Text
               className="text-xl font-medium"
@@ -251,54 +180,18 @@ export default function Home() {
 
           <View className="space-y-3 mb-24">
             {recentTransactions.map((item) => (
-              <View
+              <TransactionItem
                 key={item.id}
-                className="flex-row items-center p-4 rounded-2xl mb-3 border"
-                style={{
-                  backgroundColor: isDark
-                    ? colors.whiteOpacity(0.05)
-                    : colors.card,
-                  borderColor: colors.border,
-                }}
-              >
-                <View
-                  className="w-12 h-12 rounded-xl items-center justify-center mr-4"
-                  style={{ backgroundColor: colors.emerald + "20" }}
-                >
-                  <MaterialIcons
-                    name={item.category?.icon || "category"}
-                    size={24}
-                    color={colors.emerald}
-                  />
-                </View>
-
-                <View className="flex-1">
-                  <Text
-                    className="font-semibold text-base"
-                    style={{ color: colors.text }}
-                  >
-                    {item.note || item.category?.name}
-                  </Text>
-                  <Text
-                    className="text-xs font-medium mt-0.5"
-                    style={{ color: colors.textMuted }}
-                  >
-                    {item.category?.name} •{" "}
-                    {new Date(item.date).toLocaleDateString()}
-                  </Text>
-                </View>
-
-                <View className="items-end">
-                  <Text
-                    className="font-bold text-base mb-1"
-                    style={{ color: item.amount > 0 ? "#4ADE80" : colors.text }}
-                  >
-                    {item.amount < 0
-                      ? `-₹${Math.abs(item.amount).toFixed(2)}`
-                      : `+₹${item.amount.toFixed(2)}`}
-                  </Text>
-                </View>
-              </View>
+                item={item as any}
+                showDateHeader={false}
+                onDelete={deleteTransaction}
+                onPress={() =>
+                  router.push({
+                    pathname: "/transaction-details/[id]",
+                    params: { id: item.id },
+                  })
+                }
+              />
             ))}
             {recentTransactions.length === 0 && (
               <Text className="text-center text-gray-500 py-4">
@@ -308,7 +201,6 @@ export default function Home() {
           </View>
         </ScrollView>
 
-        {/* 4. Floating Action Button */}
         <TouchableOpacity
           activeOpacity={0.9}
           onPress={() => router.push("/add-transaction")}
@@ -322,10 +214,6 @@ export default function Home() {
             elevation: 10,
           }}
         >
-          <View
-            className="absolute w-20 h-20 rounded-full blur-2xl opacity-20"
-            style={{ backgroundColor: colors.emerald }}
-          />
           <MaterialIcons name="add" size={36} color="white" />
         </TouchableOpacity>
       </SafeAreaView>

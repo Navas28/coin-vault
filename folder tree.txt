@@ -1,0 +1,86 @@
+File Tree: coin-vault
+Generated on: 2/21/2026, 12:50:58 PM
+Root path: c:\Users\navas\Desktop\Web Development\Projects\Antigravity\coin-vault
+
+────────────────────────────────────────────────────────────────────────────────
+
+├── 📁 .agent/
+│   └── 📁 rules/
+│       └── 📝 response-guide.md
+├── 📁 app/
+│   ├── 📁 (tabs)/
+│   │   ├── 📄 _layout.tsx
+│   │   ├── 📄 goals.tsx
+│   │   ├── 📄 index.tsx
+│   │   ├── 📄 profile.tsx
+│   │   └── 📄 stats.tsx
+│   ├── 📁 transactions/
+│   │   └── 📄 index.tsx
+│   ├── 📄 _layout.tsx
+│   ├── 📄 add-transaction.tsx
+│   ├── 📄 auth.tsx
+│   ├── 📄 index.tsx
+│   ├── 📄 intro1.tsx
+│   ├── 📄 intro2.tsx
+│   └── 📄 welcome.tsx
+├── 📁 assets/
+│   ├── 📁 images/
+│   │   ├── 🖼️ favicon.png
+│   │   ├── 🖼️ icon.png
+│   │   ├── 🖼️ logo.png
+│   │   ├── 🖼️ splash-icon.png
+│   │   └── 🖼️ wel.png
+│   └── 📁 svg/
+│       ├── 🖼️ analys-spending.svg
+│       └── 🖼️ track-expense.svg
+├── 📁 components/
+│   ├── 📁 add-transaction/
+│   │   ├── 📄 AmountInput.tsx
+│   │   ├── 📄 CategorySelector.tsx
+│   │   ├── 📄 PaymentMethodSelector.tsx
+│   │   ├── 📄 ReceiptAttachment.tsx
+│   │   ├── 📄 TransactionFormFields.tsx
+│   │   └── 📄 TransactionTypeToggle.tsx
+│   ├── 📁 category-manager/
+│   │   ├── 📄 AddCategoryModal.tsx
+│   │   ├── 📄 CategoryGrid.tsx
+│   │   └── 📄 IconPicker.tsx
+│   ├── 📁 transactions/
+│   │   ├── 📄 TransactionFilters.tsx
+│   │   └── 📄 TransactionItem.tsx
+│   ├── 📁 ui/
+│   │   ├── 📄 icon-symbol.ios.tsx
+│   │   └── 📄 icon-symbol.tsx
+│   ├── 📄 CategoryManager.tsx
+│   └── 📄 VaultButton.tsx
+├── 📁 constants/
+│   ├── 📄 Colors.ts
+│   └── 📄 icons.ts
+├── 📁 context/
+│   └── 📄 ThemeContext.tsx
+├── 📁 hooks/
+│   ├── 📄 useAddTransaction.ts
+│   ├── 📄 useCategories.ts
+│   ├── 📄 useDashboard.ts
+│   └── 📄 useTransactions.ts
+├── 📁 lib/
+│   └── 📄 supabase.ts
+├── 📁 types/
+│   └── 📄 index.ts
+├── ⚙️ .gitignore
+├── 📝 README.md
+├── ⚙️ app.json
+├── 📄 babel.config.js
+├── ⚙️ eas.json
+├── 📄 eslint.config.js
+├── 🎨 global.css
+├── ⚙️ google-services.json
+├── 📄 metro.config.js
+├── 📄 nativewind-env.d.ts
+├── ⚙️ package-lock.json
+├── ⚙️ package.json
+├── 📄 tailwind.config.js
+└── ⚙️ tsconfig.json
+
+────────────────────────────────────────────────────────────────────────────────
+eas build --profile development --platform android = for Development build to run app on physical phone
