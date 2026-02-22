@@ -84,12 +84,6 @@ export default function Profile() {
     router.replace("/auth");
   };
 
-  const menuItems = [
-    { icon: "person-outline", title: "Account Settings" },
-    { icon: "notifications-none", title: "Notification Preferences" },
-    { icon: "help-outline", title: "Help & Support" },
-  ];
-
   const gradientColors = (
     isDark ? [colors.background, "#1e3843"] : [colors.background, "#E2E8F0"]
   ) as [string, string, ...string[]];
@@ -106,84 +100,48 @@ export default function Profile() {
   return (
     <LinearGradient colors={gradientColors} className="flex-1">
       <SafeAreaView className="flex-1" edges={["top", "bottom"]}>
-        <View className="flex-1 px-8 py-6">
-          {/* Profile Header */}
-          <View className="items-center mb-10 mt-4">
-            <View
-              className="w-32 h-32 rounded-full border-2 p-1 mb-4"
-              style={{ borderColor: colors.accent }}
-            >
-              <View className="w-full h-full rounded-full overflow-hidden bg-white/10 items-center justify-center">
-                {avatarUrl ? (
-                  <Image
-                    source={{ uri: avatarUrl }}
-                    className="w-full h-full"
-                  />
-                ) : (
-                  <MaterialIcons
-                    name="person"
-                    size={80}
-                    color={colors.accent}
-                  />
-                )}
-              </View>
-            </View>
-            <Text
-              className="text-3xl font-bold"
-              style={{ color: colors.accent }}
-            >
-              {fullName}
-            </Text>
-            <Text
-              className="text-base mt-1"
-              style={{ color: colors.textMuted }}
-            >
-              {email}
-            </Text>
-          </View>
-
-          {/* Settings List */}
-          <View className="w-full space-y-4 gap-4">
-            {/* Dark Mode Toggle */}
-            <View
-              className="flex-row items-center justify-between p-5 rounded-2xl border"
-              style={{
-                backgroundColor: colors.card,
-                borderColor: colors.border,
-              }}
-            >
-              <View className="flex-row items-center gap-4">
-                <View
-                  className="w-10 h-10 rounded-xl items-center justify-center"
-                  style={{
-                    backgroundColor: isDark
-                      ? colors.accentOpacity(0.1)
-                      : colors.blackOpacity(0.05),
-                  }}
-                >
-                  <Feather name="moon" size={20} color={colors.accent} />
+        <View className="flex-1 px-8 pt-5 pb-10 justify-center gap-10">
+          <View>
+            {/* Profile Header */}
+            <View className="items-center mb-12">
+              <View
+                className="w-32 h-32 rounded-full border-2 p-1 mb-6 shadow-xl"
+                style={{ borderColor: colors.accent }}
+              >
+                <View className="w-full h-full rounded-full overflow-hidden bg-white/10 items-center justify-center">
+                  {avatarUrl ? (
+                    <Image
+                      source={{ uri: avatarUrl }}
+                      className="w-full h-full"
+                    />
+                  ) : (
+                    <MaterialIcons
+                      name="person"
+                      size={80}
+                      color={colors.accent}
+                    />
+                  )}
                 </View>
-                <Text
-                  className="text-lg font-semibold"
-                  style={{ color: colors.text }}
-                >
-                  Dark Mode
-                </Text>
               </View>
-              <Switch
-                value={isDark}
-                onValueChange={toggleTheme}
-                trackColor={{ false: "#CBD5E1", true: colors.emerald }}
-                thumbColor={"#FFFFFF"}
-              />
+              <Text
+                className="text-3xl font-extrabold text-center"
+                style={{ color: colors.accent }}
+              >
+                {fullName}
+              </Text>
+              <Text
+                className="text-base mt-2 opacity-70"
+                style={{ color: colors.textMuted }}
+              >
+                {email}
+              </Text>
             </View>
 
-            {/* Menu Items */}
-            {menuItems.map((item, index) => (
-              <TouchableOpacity
-                key={index}
-                activeOpacity={0.7}
-                className="flex-row items-center justify-between p-5 rounded-2xl border"
+            {/* Settings List */}
+            <View className="w-full">
+              {/* Dark Mode Toggle */}
+              <View
+                className="flex-row items-center justify-between p-5 rounded-[24px] border"
                 style={{
                   backgroundColor: colors.card,
                   borderColor: colors.border,
@@ -191,37 +149,34 @@ export default function Profile() {
               >
                 <View className="flex-row items-center gap-4">
                   <View
-                    className="w-10 h-10 rounded-xl items-center justify-center"
+                    className="w-12 h-12 rounded-2xl items-center justify-center shadow-sm"
                     style={{
                       backgroundColor: isDark
-                        ? colors.accentOpacity(0.1)
-                        : colors.blackOpacity(0.05),
+                        ? colors.accentOpacity(0.12)
+                        : colors.blackOpacity(0.06),
                     }}
                   >
-                    <MaterialIcons
-                      name={item.icon as any}
-                      size={22}
-                      color={colors.accent}
-                    />
+                    <Feather name="moon" size={22} color={colors.accent} />
                   </View>
                   <Text
-                    className="text-lg font-semibold"
+                    className="text-lg font-bold"
                     style={{ color: colors.text }}
                   >
-                    {item.title}
+                    Dark Mode
                   </Text>
                 </View>
-                <MaterialIcons
-                  name="chevron-right"
-                  size={24}
-                  color={colors.textMuted}
+                <Switch
+                  value={isDark}
+                  onValueChange={toggleTheme}
+                  trackColor={{ false: "#CBD5E1", true: colors.emerald }}
+                  thumbColor={"#FFFFFF"}
                 />
-              </TouchableOpacity>
-            ))}
+              </View>
+            </View>
           </View>
 
           {/* Footer Area with Sign Out or Google Login */}
-          <View className="flex-1 justify-end pb-8">
+          <View className="w-full">
             {isGuest ? (
               <TouchableOpacity
                 activeOpacity={0.9}
