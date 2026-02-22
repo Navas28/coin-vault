@@ -33,8 +33,6 @@ yarn-error.*
 # local env files
 .env*.local
 .env
-eas.json
-
 # typescript
 *.tsbuildinfo
 
@@ -43,5 +41,3 @@ app-example
 # generated native folders
 /ios
 /android
-folder tree.txt
-google-services.json
