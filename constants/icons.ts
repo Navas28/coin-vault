@@ -1,8 +1,4 @@
-/**
- * All available Material Icons for category selection.
- */
 export const ALL_ICONS: string[] = [
-  // Finance & Shopping
   "payments",
   "shopping-cart",
   "shopping-bag",
@@ -18,8 +14,6 @@ export const ALL_ICONS: string[] = [
   "trending-up",
   "trending-down",
   "storefront",
-
-  // Home & Life
   "home",
   "kitchen",
   "local-laundry-service",
@@ -35,8 +29,6 @@ export const ALL_ICONS: string[] = [
   "cleaning-services",
   "electric-bolt",
   "water-drop",
-
-  // Food & Drink
   "restaurant",
   "fastfood",
   "local-pizza",
@@ -49,8 +41,6 @@ export const ALL_ICONS: string[] = [
   "liquor",
   "lunch-dining",
   "ramen-dining",
-
-  // Transport & Travel
   "directions-car",
   "directions-bus",
   "directions-bike",
@@ -66,8 +56,6 @@ export const ALL_ICONS: string[] = [
   "map",
   "hotel",
   "explore",
-
-  // Entertainment & Hobby
   "movie",
   "sports-esports",
   "music-note",
@@ -83,8 +71,6 @@ export const ALL_ICONS: string[] = [
   "pool",
   "brush",
   "castle",
-
-  // Work & Tech
   "work",
   "laptop-mac",
   "smartphone",
@@ -100,8 +86,6 @@ export const ALL_ICONS: string[] = [
   "biotech",
   "science",
   "terminal",
-
-  // Health & Self-care
   "medical-services",
   "health-and-safety",
   "spa",
@@ -112,8 +96,6 @@ export const ALL_ICONS: string[] = [
   "healing",
   "monitor-heart",
   "psychology",
-
-  // Misc
   "label",
   "bookmark",
   "star",

@@ -23,11 +23,9 @@ export function VaultButton({
   const { colors } = useTheme();
   const isGhost = variant === "ghost";
 
-  // Base styles
   const baseButtonStyles =
     "py-5 rounded-[24px] items-center justify-center flex-row shadow-sm";
 
-  // Variant styles
   const variantStyles = isGhost ? `border-2` : "";
 
   return (

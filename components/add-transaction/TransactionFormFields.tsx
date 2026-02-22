@@ -35,7 +35,6 @@ export function TransactionFormFields({
 
   return (
     <View className="mt-12 space-y-6 gap-6">
-      {/* Note */}
       <View
         className="rounded-3xl p-5 border"
         style={{ backgroundColor: op(0.05), borderColor: colors.border }}
@@ -60,7 +59,6 @@ export function TransactionFormFields({
         />
       </View>
 
-      {/* Payee (Expense only) */}
       {type === "expense" && (
         <View
           className="rounded-3xl p-5 border"
@@ -89,9 +87,7 @@ export function TransactionFormFields({
         </View>
       )}
 
-      {/* Date & Time Split */}
       <View className="flex-row gap-4">
-        {/* Date Picker */}
         <TouchableOpacity
           onPress={() => {
             setPickerMode("date");
@@ -131,7 +127,6 @@ export function TransactionFormFields({
           </View>
         </TouchableOpacity>
 
-        {/* Time Picker */}
         <TouchableOpacity
           onPress={() => {
             setPickerMode("time");

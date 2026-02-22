@@ -101,7 +101,6 @@ export default function TransactionDetails() {
   return (
     <View className="flex-1" style={{ backgroundColor: colors.background }}>
       <SafeAreaView className="flex-1" edges={["top", "bottom"]}>
-        {/* Header */}
         <View className="px-6 py-4 flex-row items-center justify-between">
           <TouchableOpacity
             onPress={() => router.back()}
@@ -136,7 +135,6 @@ export default function TransactionDetails() {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 40 }}
         >
-          {/* Amount Card */}
           <View
             className="items-center py-10 mt-6 rounded-3xl border"
             style={{
@@ -171,7 +169,6 @@ export default function TransactionDetails() {
             </Text>
           </View>
 
-          {/* Details List */}
           <View className="mt-8 space-y-6 gap-6">
             <DetailRow
               icon="calendar-today"

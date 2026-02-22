@@ -1,0 +1,62 @@
+###############################################################################
+# COIN VAULT - MASTER FOLDER STRUCTURE & FILE PURPOSES
+###############################################################################
+
+├── 📁 .agent/                  # AI development rules and configs
+├── 📁 app/                    # ROUTING & SCREENS (The "View" Layer)
+│   ├── 📁 (tabs)/             # Main Dashboard Tabs
+│   │   ├── 📄 _layout.tsx      # Configures bottom tab bar navigation
+│   │   ├── 📄 index.tsx        # HOME: Main dashboard with balance & recent items
+│   │   ├── 📄 profile.tsx      # PROFILE: Settings, Dark mode, and Sign out
+│   │   └── 📄 stats.tsx        # ANALYTICS: Charts and spending breakdowns
+│   ├── 📁 transaction-details/ # Dynamic route for viewing a single record
+│   ├── 📁 transactions/        # Main list of all history with filters
+│   ├── 📄 _layout.tsx          # Root app layout (Context Providers & Fonts)
+│   ├── 📄 add-transaction.tsx  # Form for adding/editing incomes & expenses
+│   ├── 📄 auth.tsx             # Login entrance (Google & Guest)
+│   ├── 📄 index.tsx            # Initial entry point (Check auth session)
+│   ├── 📄 welcome.tsx          # Onboarding intro screen
+│   └── 📁 intros...            # Multi-step onboarding slides
+│
+├── 📁 hooks/                   # LOGIC & DATA (The "Brain" Layer)
+│   ├── � useAddTransaction.ts # Logic for the entry form (Validation, Saves)
+│   ├── 📄 useDashboard.ts      # Logic for computing balances and trends
+│   ├── 📄 useTransactions.ts   # Logic for fetching, searching, and deleting help
+│   ├── � useStats.ts          # Data processing for charts and stats
+│   └── 📄 useCategories.ts     # Category management logic
+│
+├── 📁 components/              # UI PIECES (Reusable Elements)
+│   ├── 📁 add-transaction/    # Specialized inputs for the entry form
+│   ├── � transactions/       # List items and filter pills
+│   ├── � category-manager/   # Modal/Grid for choosing icons & categories
+│   ├── 📄 CategoryManager.tsx # Core category selector component
+│   └── 📄 VaultButton.tsx     # Custom Floating Action Button (+)
+│
+├── 📁 lib/                     # SERVICES (External Connections)
+│   └── 📄 supabase.ts          # Supabase client & Authentication setup
+│
+├── 📁 context/                 # STATE (Global Shared Data)
+│   └── 📄 ThemeContext.tsx     # Handles Dark/Light mode theme switching
+│
+├── 📁 constants/               # CONFIG (App Constants)
+│   ├── 📄 Colors.ts            # Theme color palettes (Light/Dark)
+│   └── 📄 icons.ts             # Map of MaterialIcon names used in app
+│
+├── � types/                   # DEFINITIONS (TypeScript interfaces)
+│   └── 📄 index.ts             # Global types for Transactions & Categories
+│
+├── 📁 assets/                  # MEDIA (Images & Fonts)
+│   └── 📁 images/              # Logo and splash assets
+│
+└── 📝 Root Files
+    ├── 📄 app.json             # App config (Icons, Splash, Permissions)
+    ├── 📄 tailwind.config.js   # NativeWind / Tailwind CSS styles
+    └── 📄 package.json         # Project dependencies list
+
+###############################################################################
+# HOW FILES CONNECT:
+# 1. Screen (app/) uses a Hook (hooks/) to get data.
+# 2. Hook (hooks/) calls Supabase (lib/) to fetch/save data.
+# 3. Components (components/) render the data and report back to Hooks.
+# 4. Themes (constants/Colors.ts) are applied via ThemeContext.
+###############################################################################

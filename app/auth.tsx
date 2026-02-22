@@ -24,7 +24,6 @@ export default function Auth() {
   const handleGoogleSignIn = async () => {
     setIsGoogleLoading(true);
     try {
-      // Hardcode the scheme to ensure it NEVER uses exp://
       const redirectUrl = "coinvault://auth";
 
       const { data, error } = await supabase.auth.signInWithOAuth({
@@ -48,7 +47,6 @@ export default function Auth() {
 
         if (result.type === "success") {
           const { url } = result;
-          // Robust token extraction
           const access_token = url.match(/access_token=([^&]+)/)?.[1];
           const refresh_token = url.match(/refresh_token=([^&]+)/)?.[1];
 

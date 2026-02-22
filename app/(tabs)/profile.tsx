@@ -30,7 +30,6 @@ export default function Profile() {
   const handleGoogleSignIn = async () => {
     setIsGoogleLoading(true);
     try {
-      // Robust way to generate redirect URI for Expo Go
       const redirectUrl = "coinvault://auth";
 
       const { data, error } = await supabase.auth.signInWithOAuth({
@@ -63,7 +62,6 @@ export default function Profile() {
               refresh_token,
             });
 
-            // Refresh user state
             const {
               data: { user: newUser },
             } = await supabase.auth.getUser();
@@ -102,7 +100,6 @@ export default function Profile() {
       <SafeAreaView className="flex-1" edges={["top", "bottom"]}>
         <View className="flex-1 px-8 pt-5 pb-10 justify-center gap-10">
           <View>
-            {/* Profile Header */}
             <View className="items-center mb-12">
               <View
                 className="w-32 h-32 rounded-full border-2 p-1 mb-6 shadow-xl"
@@ -137,9 +134,7 @@ export default function Profile() {
               </Text>
             </View>
 
-            {/* Settings List */}
             <View className="w-full">
-              {/* Dark Mode Toggle */}
               <View
                 className="flex-row items-center justify-between p-5 rounded-[24px] border"
                 style={{
@@ -175,7 +170,6 @@ export default function Profile() {
             </View>
           </View>
 
-          {/* Footer Area with Sign Out or Google Login */}
           <View className="w-full">
             {isGuest ? (
               <TouchableOpacity

@@ -1,5 +1,3 @@
-// Fetch and process stats data for the Stats screen
-
 import {
     endOfMonth,
     endOfWeek,
@@ -39,27 +37,26 @@ export interface StatsData {
   refetch: () => void;
 }
 
-// Palette — teal/emerald family + warm complements
 const EXPENSE_COLORS = [
-  "#FF5252", // Vibrant Coral Red
-  "#FF8F00", // Amber Orange
-  "#F4511E", // Deep Orange
-  "#AD1457", // Pinkish Maroon
-  "#D84315", // Burnt Orange
-  "#C62828", // Deep Red
-  "#8E24AA", // Purple
-  "#FF7043", // Light Terracotta
+  "#FF5252",
+  "#FF8F00",
+  "#F4511E",
+  "#AD1457",
+  "#D84315",
+  "#C62828",
+  "#8E24AA",
+  "#FF7043",
 ];
 
 const INCOME_COLORS = [
-  "#00C853", // Vivid Green
-  "#00BFA5", // Bright Teal
-  "#00B0FF", // Bright Blue
-  "#64DD17", // Lime Green
-  "#0091EA", // Sky Blue
-  "#1DE9B6", // Aqua
-  "#76FF03", // Chartreuse
-  "#2962FF", // Royal Blue
+  "#00C853",
+  "#00BFA5",
+  "#00B0FF",
+  "#64DD17",
+  "#0091EA",
+  "#1DE9B6",
+  "#76FF03",
+  "#2962FF",
 ];
 
 function buildCategoryStats(

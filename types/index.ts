@@ -1,7 +1,3 @@
-/**
- * Shared TypeScript types for the app.
- */
-
 export interface Category {
   id: string;
   name: string;

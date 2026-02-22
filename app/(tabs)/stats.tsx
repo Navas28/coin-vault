@@ -19,7 +19,6 @@ import { ChartMode, FilterPeriod, useStats } from "../../hooks/useStats";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
-// ── Main Screen ─────────────────────────────────────────────────────────────
 export default function Stats() {
   const { colors, isDark } = useTheme();
   const {
@@ -56,7 +55,6 @@ export default function Stats() {
   const activeTotalForChart =
     chartMode === "expense" ? totalExpense : totalIncome;
 
-  // Transform data for gifted-charts
   const chartData = activeCategoryStats.map((cat) => ({
     value: cat.total,
     color: cat.color,
@@ -70,7 +68,6 @@ export default function Stats() {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ paddingBottom: 110 }}
         >
-          {/* ── Filter Pills ─────────────────────────── */}
           <View className="px-6 mt-4">
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               <View className="flex-row gap-2">
@@ -99,7 +96,6 @@ export default function Stats() {
             </ScrollView>
           </View>
 
-          {/* ── Custom Date Pickers ───────────────────── */}
           {filter === "Custom" && (
             <View
               className="mx-6 mt-3.5 rounded-[18px] p-4 flex-row gap-3 border"
@@ -188,7 +184,6 @@ export default function Stats() {
             />
           )}
 
-          {/* ── Summary Cards ─────────────────────────── */}
           <View className="mx-6 mt-[18px] flex-row gap-3">
             <View
               className="flex-1 rounded-[20px] p-4 border"
@@ -232,7 +227,6 @@ export default function Stats() {
             </View>
           </View>
 
-          {/* ── Chart Mode Toggle ─────────────────────── */}
           <View className="mx-6 mt-5">
             <View
               className="flex-row rounded-2xl p-1"
@@ -285,7 +279,6 @@ export default function Stats() {
             </View>
           ) : (
             <>
-              {/* ── Simple Donut Chart ────────────────── */}
               <View className="items-center mt-[30px]">
                 <PieChart
                   donut
@@ -312,7 +305,6 @@ export default function Stats() {
                 />
               </View>
 
-              {/* ── Category List ─────────────────────── */}
               <View
                 className="mx-6 mt-[30px] rounded-[24px] p-4 border"
                 style={{
