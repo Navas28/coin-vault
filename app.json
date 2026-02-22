@@ -7,7 +7,7 @@
     "icon": "./assets/images/logo.png",
     "scheme": "coinvault",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "ios": {
       "supportsTablet": true
     },
@@ -30,12 +30,10 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/logo.png",
-          "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff",
+          "backgroundColor": "#F2F5F7",
           "dark": {
-            "backgroundColor": "#1e3843"
+            "backgroundColor": "#284b5c"
           }
         }
       ],
