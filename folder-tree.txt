@@ -60,3 +60,6 @@
 # 3. Components (components/) render the data and report back to Hooks.
 # 4. Themes (constants/Colors.ts) are applied via ThemeContext.
 ###############################################################################
+
+
+eas build --profile preview --platform android = run after march 1 - 2026
