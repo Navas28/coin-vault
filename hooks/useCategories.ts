@@ -1,44 +1,22 @@
-// 	All category Supabase logic 
-
+import * as Crypto from "expo-crypto";
 import { useState } from "react";
 import { Alert } from "react-native";
-import { supabase } from "../lib/supabase";
+import { getDb } from "../lib/database";
 import { Category } from "../types";
 
-interface UseCategories {
-  categories: Category[];
-  isLoading: boolean;
-  fetchCategories: (type: "income" | "expense") => Promise<void>;
-  addCategory: (
-    name: string,
-    icon: string,
-    type: "income" | "expense",
-  ) => Promise<Category | null>;
-  deleteCategory: (id: string) => Promise<void>;
-}
-
-export function useCategories(): UseCategories {
+export function useCategories() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchCategories = async (type: "income" | "expense") => {
     try {
       setIsLoading(true);
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (!user) return;
-
-      const { data, error } = await supabase
-        .from("categories")
-        .select("*")
-        .eq("user_id", user.id)
-        .eq("type", type)
-        .order("created_at", { ascending: true });
-
-      if (error) throw error;
-      setCategories(data || []);
+      const db = await getDb();
+      const result = await db.getAllAsync<Category>(
+        "SELECT * FROM categories WHERE type = ? ORDER BY name ASC",
+        [type],
+      );
+      setCategories(result);
     } catch (error: any) {
       Alert.alert("Error", error.message);
     } finally {
@@ -52,22 +30,17 @@ export function useCategories(): UseCategories {
     type: "income" | "expense",
   ): Promise<Category | null> => {
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const db = await getDb();
+      const id = Crypto.randomUUID();
+      const newCategory: Category = { id, name: name.trim(), icon, type };
 
-      if (!user) return null;
+      await db.runAsync(
+        "INSERT INTO categories (id, name, icon, type) VALUES (?, ?, ?, ?)",
+        [id, newCategory.name, icon, type],
+      );
 
-      const { data, error } = await supabase
-        .from("categories")
-        .insert({ user_id: user.id, name: name.trim(), icon, type })
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      setCategories((prev) => [...prev, data]);
-      return data;
+      setCategories((prev) => [...prev, newCategory]);
+      return newCategory;
     } catch (error: any) {
       Alert.alert("Error", error.message);
       return null;
@@ -76,8 +49,8 @@ export function useCategories(): UseCategories {
 
   const deleteCategory = async (id: string) => {
     try {
-      const { error } = await supabase.from("categories").delete().eq("id", id);
-      if (error) throw error;
+      const db = await getDb();
+      await db.runAsync("DELETE FROM categories WHERE id = ?", [id]);
       setCategories((prev) => prev.filter((c) => c.id !== id));
     } catch (error: any) {
       Alert.alert("Error", "Could not delete category.");

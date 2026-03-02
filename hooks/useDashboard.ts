@@ -1,22 +1,9 @@
 import { useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
-import { supabase } from "../lib/supabase";
+import { getDb } from "../lib/database";
 import { Transaction } from "../types";
 
-interface DashboardData {
-  userName: string | null;
-  isGuest: boolean;
-  balance: number;
-  income: number;
-  expense: number;
-  recentTransactions: Transaction[];
-  refreshing: boolean;
-  onRefresh: () => void;
-}
-
-export function useDashboard(): DashboardData {
-  const [userName, setUserName] = useState<string | null>(null);
-  const [isGuest, setIsGuest] = useState(false);
+export function useDashboard() {
   const [balance, setBalance] = useState(0);
   const [income, setIncome] = useState(0);
   const [expense, setExpense] = useState(0);
@@ -33,37 +20,16 @@ export function useDashboard(): DashboardData {
 
   const fetchDashboardData = async () => {
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const db = await getDb();
 
-      if (!user) return;
-
-      setIsGuest(user.is_anonymous ?? false);
-      setUserName(
-        user.is_anonymous
-          ? "Guest"
-          : user.user_metadata?.full_name ||
-              user.email?.split("@")[0] ||
-              "User",
-      );
-
-      const { data: txs, error } = await supabase
-        .from("transactions")
-        .select(
-          `
-          id,
-          amount,
-          date,
-          note,
-          type,
-          category:categories(name, icon, type)
-        `,
-        )
-        .eq("user_id", user.id)
-        .order("date", { ascending: false });
-
-      if (error) throw error;
+      const txs = await db.getAllAsync<any>(`
+        SELECT 
+          t.id, t.amount, t.type, t.date, t.note,
+          c.name as category_name, c.icon as category_icon
+        FROM transactions t
+        LEFT JOIN categories c ON t.category_id = c.id
+        ORDER BY t.date DESC
+      `);
 
       if (txs) {
         const totalIncome = txs
@@ -76,7 +42,21 @@ export function useDashboard(): DashboardData {
         setIncome(totalIncome);
         setExpense(totalExpense);
         setBalance(totalIncome + totalExpense);
-        setRecentTransactions(txs.slice(0, 5) as any);
+
+        const formatted: Transaction[] = txs.slice(0, 5).map((row) => ({
+          id: row.id,
+          amount: row.amount,
+          type: row.type,
+          date: row.date,
+          note: row.note,
+          payee: row.payee,
+          category: {
+            name: row.category_name,
+            icon: row.category_icon,
+          },
+        }));
+
+        setRecentTransactions(formatted);
       }
     } catch (e) {
       console.error(e);
@@ -91,8 +71,8 @@ export function useDashboard(): DashboardData {
   };
 
   return {
-    userName,
-    isGuest,
+    userName: "User",
+    isGuest: true,
     balance,
     income,
     expense,

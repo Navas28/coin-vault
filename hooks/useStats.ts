@@ -8,7 +8,7 @@ import {
 } from "date-fns";
 import { useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
-import { supabase } from "../lib/supabase";
+import { getDb } from "../lib/database";
 
 export type FilterPeriod = "Week" | "Month" | "Year" | "Custom";
 export type ChartMode = "expense" | "income";
@@ -70,8 +70,8 @@ function buildCategoryStats(
   txs
     .filter((t) => (type === "expense" ? t.amount < 0 : t.amount > 0))
     .forEach((t) => {
-      const name = t.category?.name || "Other";
-      const icon = t.category?.icon || "category";
+      const name = t.category_name || "Other";
+      const icon = t.category_icon || "category";
       if (!catMap[name]) catMap[name] = { name, icon, total: 0 };
       catMap[name].total += Math.abs(t.amount);
     });
@@ -130,24 +130,18 @@ export function useStats(): StatsData {
   const fetchStats = async () => {
     setLoading(true);
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) return;
-
       const { from, to } = getDateRange();
+      const db = await getDb();
 
-      const { data, error } = await supabase
-        .from("transactions")
-        .select(`id, amount, type, date, category:categories(name, icon)`)
-        .eq("user_id", user.id)
-        .gte("date", from.toISOString())
-        .lte("date", to.toISOString())
-        .order("date", { ascending: true });
-
-      if (error) throw error;
-
-      const txs = (data || []) as any[];
+      const txs = await db.getAllAsync<any>(
+        `
+        SELECT t.amount, c.name as category_name, c.icon as category_icon
+        FROM transactions t
+        LEFT JOIN categories c ON t.category_id = c.id
+        WHERE t.date >= ? AND t.date <= ?
+      `,
+        [from.toISOString(), to.toISOString()],
+      );
 
       let income = 0;
       let expense = 0;

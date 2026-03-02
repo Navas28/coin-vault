@@ -1,26 +1,12 @@
-// Fetch, filter, search, delete transactions
-
 import { isSameDay, isSameMonth, isSameWeek, parseISO } from "date-fns";
 import { useEffect, useState } from "react";
 import { Alert } from "react-native";
-import { supabase } from "../lib/supabase";
+import { getDb } from "../lib/database";
 import { Transaction } from "../types";
 
 type FilterType = "All" | "Today" | "Week" | "Month";
 
-interface UseTransactions {
-  transactions: Transaction[];
-  filteredTransactions: Transaction[];
-  filter: FilterType;
-  setFilter: (f: FilterType) => void;
-  searchQuery: string;
-  setSearchQuery: (q: string) => void;
-  loading: boolean;
-  fetchTransactions: () => Promise<void>;
-  deleteTransaction: (id: string) => void;
-}
-
-export function useTransactions(): UseTransactions {
+export function useTransactions() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [filteredTransactions, setFilteredTransactions] = useState<
     Transaction[]
@@ -40,30 +26,34 @@ export function useTransactions(): UseTransactions {
   const fetchTransactions = async () => {
     try {
       setLoading(true);
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const db = await getDb();
 
-      if (!user) return;
+      // SQL JOIN to get category name and icon
+      const result = await db.getAllAsync<any>(`
+        SELECT 
+          t.id, t.amount, t.type, t.date, t.note, t.payee, t.payment_method,
+          c.name as category_name, c.icon as category_icon
+        FROM transactions t
+        LEFT JOIN categories c ON t.category_id = c.id
+        ORDER BY t.date DESC
+      `);
 
-      const { data, error } = await supabase
-        .from("transactions")
-        .select(
-          `
-          id,
-          amount,
-          type,
-          date,
-          note,
-          payee,
-          category:categories(name, icon)
-        `,
-        )
-        .eq("user_id", user.id)
-        .order("date", { ascending: false });
+      // Maps flat SQLite result to the Transaction type nesting
+      const formatted: Transaction[] = result.map((row) => ({
+        id: row.id,
+        amount: row.amount,
+        type: row.type,
+        date: row.date,
+        note: row.note,
+        payee: row.payee,
+        payment_method: row.payment_method,
+        category: {
+          name: row.category_name,
+          icon: row.category_icon,
+        },
+      }));
 
-      if (error) throw error;
-      setTransactions(data as any);
+      setTransactions(formatted);
     } catch (error: any) {
       Alert.alert("Error", error.message);
     } finally {
@@ -103,14 +93,12 @@ export function useTransactions(): UseTransactions {
         text: "Delete",
         style: "destructive",
         onPress: async () => {
-          const { error } = await supabase
-            .from("transactions")
-            .delete()
-            .eq("id", id);
-          if (error) {
-            Alert.alert("Error", error.message);
-          } else {
+          try {
+            const db = await getDb();
+            await db.runAsync("DELETE FROM transactions WHERE id = ?", [id]);
             setTransactions((prev) => prev.filter((t) => t.id !== id));
+          } catch (error: any) {
+            Alert.alert("Error", error.message);
           }
         },
       },

@@ -1,99 +1,15 @@
-import { AntDesign, Feather, MaterialIcons } from "@expo/vector-icons";
+import { Feather, MaterialIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import { router } from "expo-router";
-import * as WebBrowser from "expo-web-browser";
-import { useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  Image,
-  Switch,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Switch, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../../context/ThemeContext";
-import { supabase } from "../../lib/supabase";
 
 export default function Profile() {
   const { colors, isDark, toggleTheme } = useTheme();
-  const [user, setUser] = useState<any>(null);
-  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      setUser(user);
-    });
-  }, []);
-
-  const handleGoogleSignIn = async () => {
-    setIsGoogleLoading(true);
-    try {
-      const redirectUrl = "coinvault://auth";
-
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-          redirectTo: redirectUrl,
-          skipBrowserRedirect: true,
-          queryParams: {
-            prompt: "select_account",
-          },
-        },
-      });
-
-      if (error) throw error;
-
-      if (data?.url) {
-        const result = await WebBrowser.openAuthSessionAsync(
-          data.url,
-          redirectUrl,
-        );
-
-        if (result.type === "success") {
-          const { url } = result;
-          const access_token = url.match(/access_token=([^&]+)/)?.[1];
-          const refresh_token = url.match(/refresh_token=([^&]+)/)?.[1];
-
-          if (access_token && refresh_token) {
-            await supabase.auth.setSession({
-              access_token,
-              refresh_token,
-            });
-
-            const {
-              data: { user: newUser },
-            } = await supabase.auth.getUser();
-            setUser(newUser);
-          }
-        }
-      }
-    } catch (error: any) {
-      console.error("AUTH ERROR:", error);
-      Alert.alert("Login Error", error.message || "An error occurred.");
-    } finally {
-      setIsGoogleLoading(false);
-    }
-  };
-
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    router.replace("/auth");
-  };
 
   const gradientColors = (
     isDark ? [colors.background, "#1e3843"] : [colors.background, "#E2E8F0"]
   ) as [string, string, ...string[]];
-
-  const avatarUrl = user?.user_metadata?.avatar_url;
-  const fullName =
-    user?.user_metadata?.full_name ||
-    (user?.is_anonymous ? "Guest" : "Alexander Hunt");
-  const email =
-    user?.email ||
-    (user?.is_anonymous ? "guest@gmail.com" : "alexander.hunt@example.com");
-  const isGuest = user?.is_anonymous;
 
   return (
     <LinearGradient colors={gradientColors} className="flex-1">
@@ -106,31 +22,24 @@ export default function Profile() {
                 style={{ borderColor: colors.accent }}
               >
                 <View className="w-full h-full rounded-full overflow-hidden bg-white/10 items-center justify-center">
-                  {avatarUrl ? (
-                    <Image
-                      source={{ uri: avatarUrl }}
-                      className="w-full h-full"
-                    />
-                  ) : (
-                    <MaterialIcons
-                      name="person"
-                      size={80}
-                      color={colors.accent}
-                    />
-                  )}
+                  <MaterialIcons
+                    name="person"
+                    size={80}
+                    color={colors.accent}
+                  />
                 </View>
               </View>
               <Text
                 className="text-3xl font-extrabold text-center"
                 style={{ color: colors.accent }}
               >
-                {fullName}
+                Vault User
               </Text>
               <Text
                 className="text-base mt-2 opacity-70"
                 style={{ color: colors.textMuted }}
               >
-                {email}
+                Local Account
               </Text>
             </View>
 
@@ -170,61 +79,7 @@ export default function Profile() {
             </View>
           </View>
 
-          <View className="w-full">
-            {isGuest ? (
-              <TouchableOpacity
-                activeOpacity={0.9}
-                className="flex-row items-center justify-center py-5 rounded-[24px]"
-                style={{ backgroundColor: isDark ? colors.white : colors.navy }}
-                onPress={handleGoogleSignIn}
-                disabled={isGoogleLoading}
-              >
-                {isGoogleLoading ? (
-                  <ActivityIndicator
-                    color={isDark ? colors.navy : colors.white}
-                  />
-                ) : (
-                  <>
-                    <AntDesign
-                      name="google"
-                      size={24}
-                      color={isDark ? "#000" : "#FFF"}
-                      style={{ marginRight: 12 }}
-                    />
-                    <Text
-                      className="text-xl font-bold"
-                      style={{ color: isDark ? "#000" : "#FFF" }}
-                    >
-                      Continue with Google
-                    </Text>
-                  </>
-                )}
-              </TouchableOpacity>
-            ) : (
-              <TouchableOpacity
-                activeOpacity={0.7}
-                onPress={handleSignOut}
-                className="w-full py-5 rounded-2xl border-2 items-center flex-row justify-center gap-3"
-                style={{
-                  borderColor: isDark
-                    ? "rgba(255, 255, 255, 0.2)"
-                    : "rgba(0, 0, 0, 0.1)",
-                }}
-              >
-                <MaterialIcons
-                  name="logout"
-                  size={20}
-                  color={isDark ? "#FFFFFF" : colors.navy}
-                />
-                <Text
-                  className="font-bold text-lg"
-                  style={{ color: isDark ? "#FFFFFF" : colors.navy }}
-                >
-                  Sign Out
-                </Text>
-              </TouchableOpacity>
-            )}
-          </View>
+          <View className="h-20" />
         </View>
       </SafeAreaView>
     </LinearGradient>

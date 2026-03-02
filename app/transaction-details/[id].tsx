@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "../../context/ThemeContext";
-import { supabase } from "../../lib/supabase";
+import { getDb } from "../../lib/database";
 import { Transaction } from "../../types";
 
 export default function TransactionDetails() {
@@ -26,20 +26,35 @@ export default function TransactionDetails() {
   }, [id]);
 
   const fetchTransaction = async () => {
+    if (!id || typeof id !== "string") return;
     try {
-      const { data, error } = await supabase
-        .from("transactions")
-        .select(
-          `
-          *,
-          category:categories(name, icon, type)
-        `,
-        )
-        .eq("id", id)
-        .single();
+      const db = await getDb();
+      const row = await db.getFirstAsync<any>(
+        `
+        SELECT t.*, c.name as cat_name, c.icon as cat_icon, c.type as cat_type
+        FROM transactions t
+        LEFT JOIN categories c ON t.category_id = c.id
+        WHERE t.id = ?
+      `,
+        [id as string],
+      );
 
-      if (error) throw error;
-      setTransaction(data);
+      if (row) {
+        setTransaction({
+          id: row.id,
+          amount: row.amount,
+          type: row.type,
+          date: row.date,
+          note: row.note,
+          payee: row.payee,
+          payment_method: row.payment_method,
+          category: {
+            name: row.cat_name,
+            icon: row.cat_icon,
+            type: row.cat_type,
+          },
+        });
+      }
     } catch (error: any) {
       Alert.alert("Error", error.message);
       router.back();
@@ -59,11 +74,10 @@ export default function TransactionDetails() {
           style: "destructive",
           onPress: async () => {
             try {
-              const { error } = await supabase
-                .from("transactions")
-                .delete()
-                .eq("id", id);
-              if (error) throw error;
+              const db = await getDb();
+              await db.runAsync("DELETE FROM transactions WHERE id = ?", [
+                id as string,
+              ]);
               router.back();
             } catch (error: any) {
               Alert.alert("Error", error.message);
