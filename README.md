@@ -21,10 +21,16 @@ Coin Vault is a premium, privacy-focused personal finance tracker built with Rea
 - **Icons**: [Expo Vector Icons](https://docs.expo.dev/guides/icons/) (Material Design)
 - **Fonts**: [Google Poppins](https://fonts.google.com/specimen/Poppins)
 
-## � App Gallery
+## �📸 App Gallery
 
-
-
+<img width="315" height="600" alt="app-1" src="https://github.com/user-attachments/assets/6d69487c-21de-4f7d-9d15-08dd50335fef" />
+<img width="315" height="600" alt="app-2" src="https://github.com/user-attachments/assets/79fb537e-8012-491f-b9f8-9c39e6a9923a" />
+<img width="315" height="600" alt="app-3" src="https://github.com/user-attachments/assets/6f2ad50d-8e60-4866-bef8-38f6d053b019" />
+<img width="315" height="600" alt="app-4" src="https://github.com/user-attachments/assets/829ebc7a-8239-45b0-8371-7514c8b9c621" />
+<img width="315" height="600" alt="app-5" src="https://github.com/user-attachments/assets/1b5630ea-e59c-4654-9fe9-29feb4760422" />
+<img width="315" height="600" alt="app-6" src="https://github.com/user-attachments/assets/833b990e-b844-47b1-a46f-21e270d9c446" />
+<img width="315" height="600" alt="app-7" src="https://github.com/user-attachments/assets/1f211760-ffed-4ed4-ba54-9fd520d45da6" />
+<img width="315" height="600" alt="app-8" src="https://github.com/user-attachments/assets/24ba7c83-7bf5-4f74-88bb-0ed39782b607" />
 
 ## �🚀 Getting Started
 
