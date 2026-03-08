@@ -24,7 +24,6 @@ Coin Vault follows a **Modular Separation of Concerns** pattern:
 - `(tabs)/_layout.tsx`: Configures the bottom tab bar and icons.
 - `(tabs)/index.tsx`: **Home Dashboard**. Displays balance cards and recent transactions.
 - `(tabs)/stats.tsx`: **Analytics Screen**. Uses `useStats.ts` and `react-native-gifted-charts` to show spending.
-- `(tabs)/profile.tsx`: **User Local Profile**. Handles Theme toggling.
 - `add-transaction.tsx`: The form to create or edit records. Managed by `useAddTransaction.ts`.
 - `welcome.tsx` & `intro1/2.tsx`: The Onboarding flow for new users.
 

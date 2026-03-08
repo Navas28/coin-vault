@@ -13,8 +13,7 @@ import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
-import { Text, View } from "react-native";
+import { useEffect, useState } from "react";
 import "react-native-reanimated";
 import { ThemeProvider, useTheme } from "../context/ThemeContext";
 import "../global.css";
@@ -24,12 +23,6 @@ SplashScreen.preventAutoHideAsync();
 
 function RootLayoutContent() {
   const { isDark } = useTheme();
-
-  useEffect(() => {
-    initializeDatabase().catch((err) =>
-      console.error("Failed to initialize DB:", err),
-    );
-  }, []);
 
   return (
     <NavProvider value={isDark ? DarkTheme : DefaultTheme}>
@@ -46,7 +39,8 @@ function RootLayoutContent() {
 }
 
 export default function RootLayout() {
-  const [loaded] = useFonts({
+  const [dbInitialized, setDbInitialized] = useState(false);
+  const [fontsLoaded] = useFonts({
     Poppins_400Regular,
     Poppins_500Medium,
     Poppins_600SemiBold,
@@ -54,17 +48,28 @@ export default function RootLayout() {
   });
 
   useEffect(() => {
-    if (loaded) {
+    async function init() {
+      try {
+        await initializeDatabase();
+        setDbInitialized(true);
+      } catch (err) {
+        console.error("DB Init Error:", err);
+        // Still set to true so app doesn't hang forever,
+        // but hooks will handle specific errors
+        setDbInitialized(true);
+      }
+    }
+    init();
+  }, []);
+
+  useEffect(() => {
+    if (fontsLoaded && dbInitialized) {
       SplashScreen.hideAsync();
     }
-  }, [loaded]);
+  }, [fontsLoaded, dbInitialized]);
 
-  if (!loaded) {
-    return (
-      <View className="flex-1 justify-center items-center">
-        <Text>Loading Assets...</Text>
-      </View>
-    );
+  if (!fontsLoaded || !dbInitialized) {
+    return null; // Keep splash screen visible
   }
 
   return (

@@ -17,7 +17,8 @@
         "foregroundImage": "./assets/images/logo.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "coinvault.app"
     },
     "web": {
       "output": "static",

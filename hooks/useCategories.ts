@@ -9,6 +9,10 @@ export function useCategories() {
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchCategories = async (type: "income" | "expense") => {
+    if (!type) {
+      console.warn("fetchCategories called without type");
+      return;
+    }
     try {
       setIsLoading(true);
       const db = await getDb();
@@ -16,8 +20,9 @@ export function useCategories() {
         "SELECT * FROM categories WHERE type = ? ORDER BY name ASC",
         [type],
       );
-      setCategories(result);
+      setCategories(result || []);
     } catch (error: any) {
+      console.error("fetchCategories error:", error);
       Alert.alert("Error", error.message);
     } finally {
       setIsLoading(false);
@@ -29,6 +34,10 @@ export function useCategories() {
     icon: string,
     type: "income" | "expense",
   ): Promise<Category | null> => {
+    if (!name || !icon || !type) {
+      Alert.alert("Error", "Name and icon are required.");
+      return null;
+    }
     try {
       const db = await getDb();
       const id = Crypto.randomUUID();
@@ -42,6 +51,7 @@ export function useCategories() {
       setCategories((prev) => [...prev, newCategory]);
       return newCategory;
     } catch (error: any) {
+      console.error("addCategory error:", error);
       Alert.alert("Error", error.message);
       return null;
     }

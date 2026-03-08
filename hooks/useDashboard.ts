@@ -71,8 +71,6 @@ export function useDashboard() {
   };
 
   return {
-    userName: "User",
-    isGuest: true,
     balance,
     income,
     expense,
