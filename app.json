@@ -29,16 +29,12 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/logo.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#F2F5F7",
+          "backgroundColor": "#284b5c",
           "dark": {
             "backgroundColor": "#284b5c"
           }
         }
       ],
-      "expo-secure-store",
       "@react-native-community/datetimepicker",
       "expo-sqlite"
     ],

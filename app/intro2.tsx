@@ -78,7 +78,12 @@ export default function Intro2() {
           </View>
 
           <View className="w-full">
-            <VaultButton label="Next" onPress={() => router.push("/auth")} />
+            <VaultButton
+              label="Get Started"
+              onPress={() => {
+                router.replace("/home");
+              }}
+            />
           </View>
         </View>
       </SafeAreaView>

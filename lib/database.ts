@@ -42,12 +42,19 @@ export const initializeDatabase = async () => {
       );
     `);
 
+    // Settings table
+    await db.execAsync(`
+      CREATE TABLE IF NOT EXISTS settings (
+        id TEXT PRIMARY KEY NOT NULL,
+        value TEXT NOT NULL
+      );
+    `);
+
     // Seed default categories if none exist
     const categories = await db.getAllAsync(
       "SELECT id FROM categories LIMIT 1",
     );
     if (categories.length === 0) {
-      console.log("Seeding default categories...");
       const defaultCategories = [
         ["1", "Food & Drinks", "restaurant", "expense"],
         ["2", "Transport", "directions-car", "expense"],
@@ -74,4 +81,21 @@ export const initializeDatabase = async () => {
     console.error("Database initialization error:", error);
     throw error;
   }
+};
+
+export const getSetting = async (id: string, defaultValue: string) => {
+  const db = await getDb();
+  const row = await db.getFirstAsync<{ value: string }>(
+    "SELECT value FROM settings WHERE id = ?",
+    [id],
+  );
+  return row ? row.value : defaultValue;
+};
+
+export const setSetting = async (id: string, value: string) => {
+  const db = await getDb();
+  await db.runAsync(
+    "INSERT OR REPLACE INTO settings (id, value) VALUES (?, ?)",
+    [id, value],
+  );
 };

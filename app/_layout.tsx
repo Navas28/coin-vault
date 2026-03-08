@@ -27,6 +27,10 @@ function RootLayoutContent() {
   return (
     <NavProvider value={isDark ? DarkTheme : DefaultTheme}>
       <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="index" />
+        <Stack.Screen name="welcome" />
+        <Stack.Screen name="intro1" />
+        <Stack.Screen name="intro2" />
         <Stack.Screen name="(tabs)" />
         <Stack.Screen
           name="add-transaction"
